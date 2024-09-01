@@ -56,7 +56,7 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            # Install AWS CLI if it's not installed
+
             sudo apt-get update
             sudo apt-get install -y awscli
 
