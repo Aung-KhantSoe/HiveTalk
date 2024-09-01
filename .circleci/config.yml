@@ -68,7 +68,7 @@ jobs:
             # Define your variables
             EC2_USER=ec2-user
             EC2_HOST=13.250.12.226
-            BUILD_DIR=dist
+            BUILD_DIR=~/frontend/dist
             DEPLOY_DIR=~/desktop/Hivetalk
 
             # Ensure the build directory exists locally
