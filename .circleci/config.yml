@@ -47,8 +47,6 @@ jobs:
           name: Verify Build Directory
           command: |
             cd frontend
-            ls -la
-            ls -la dist || echo "Build directory not found"
             cd dist
             ls -la
 
