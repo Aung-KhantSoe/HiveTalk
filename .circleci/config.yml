@@ -29,8 +29,6 @@ jobs:
           name: Run Add Test Script
           command: python3 backend/add_test.py
 
-
-
   install-frontend:
     executor: node-executor
     steps:
@@ -56,7 +54,7 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-
+            # Install AWS CLI if it's not installed
             sudo apt-get update
             sudo apt-get install -y awscli
 
@@ -70,7 +68,7 @@ jobs:
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
 
             # SSH into the EC2 instance and restart the application (if needed)
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<<EOF
               cd $DEPLOY_DIR
               # Restart your server (e.g., if using PM2 or a similar tool)
               sudo systemctl restart nginx
