@@ -49,6 +49,8 @@ jobs:
             cd frontend
             ls -la
             ls -la dist || echo "Build directory not found"
+            cd dist
+            ls -la
 
   deploy-to-ec2:
     docker:
