@@ -29,40 +29,7 @@ jobs:
           name: Run Add Test Script
           command: python3 backend/add_test.py
 
-  install-backend:
-    executor: python-executor
-    steps:
-      - checkout
-      - run:
-          name: Set up Python Environment
-          command: |
-            # Remove existing virtual environment if it exists
-            if [ -d "venv" ]; then
-              rm -rf venv
-            fi
-            # Create a new virtual environment
-            python -m venv venv
-            
-            # Activate the virtual environment
-            . venv/bin/activate
 
-            # Upgrade pip to the latest version
-            pip install --upgrade pip
-            pip cache purge  # Clear pip cache to avoid corrupted files
-            
-            # Install dependencies with no cache to avoid installation errors
-            pip install --no-cache-dir -r backend/requirements.txt
-      - run:
-          name: Install aiobotocore Separately
-          command: |
-            . venv/bin/activate
-            # Try installing aiobotocore first to identify if it fails specifically
-            pip install --no-cache-dir aiobotocore==2.6.0  # Specify a stable version
-      - run:
-          name: Install Remaining Dependencies
-          command: |
-            . venv/bin/activate
-            pip install --no-cache-dir -r backend/requirements.txt
 
   install-frontend:
     executor: node-executor
@@ -107,9 +74,7 @@ workflows:
       - test:
           requires:
             - build
-      - install-backend
       - install-frontend
       - deploy-to-ec2:
           requires:
-            - install-backend
             - install-frontend
