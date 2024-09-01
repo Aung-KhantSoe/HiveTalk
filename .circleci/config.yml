@@ -68,11 +68,13 @@ jobs:
             # Define your variables
             EC2_USER=ec2-user
             EC2_HOST=13.250.12.226
-            BUILD_DIR=~/frontend/dist
+            BUILD_DIR=frontend/dist
             DEPLOY_DIR=~/desktop/Hivetalk
 
-            # Ensure the build directory exists locally
-            ls -la $BUILD_DIR || echo "Build directory not found on CircleCI"
+            # Verify local build directory existence
+            echo "Checking local build directory:"
+            ls -la frontend || echo "Frontend directory not found"
+            ls -la frontend/dist || echo "Dist directory not found"
 
             # Upload the build files to EC2
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
