@@ -43,21 +43,7 @@ jobs:
           command: |
             cd frontend 
             npm run build
-      - run:
-          name: Verify Build Directory
-          command: |
-            cd frontend
-            cd dist
-            ls -la
-      - run:
-          name: Install rsync and AWS CLI
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y rsync awscli
-      - add_ssh_keys:
-          fingerprints:
-            - "SHA256:m8/d+W2BnZUkDMIX1Dt9yikNFddGB0WAUKtff49ePXQ"  # Replace with the correct fingerprint from CircleCI settings
-  
+            
   deploy-to-ec2:
     steps:
       - run:
