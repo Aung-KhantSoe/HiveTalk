@@ -36,19 +36,19 @@ jobs:
       - run:
           name: Install Node.js Dependencies
           command: |
-            cd frontend  # Update this path if your frontend folder name is different
+            cd frontend 
             npm install
       - run:
           name: Build React App
           command: |
-            cd frontend  # Update this path if your frontend folder name is different
+            cd frontend 
             npm run build
       - run:
           name: Verify Build Directory
           command: |
             cd frontend
             ls -la
-            ls -la build || echo "Build directory not found"
+            ls -la dist || echo "Build directory not found"
 
   deploy-to-ec2:
     docker:
@@ -67,8 +67,8 @@ jobs:
           command: |
             # Define your variables
             EC2_USER=ec2-user
-            EC2_HOST=13.250.103.232
-            BUILD_DIR=frontend/build
+            EC2_HOST=13.250.12.226
+            BUILD_DIR=frontend/dist
             DEPLOY_DIR=~/desktop/Hivetalk
 
             # Ensure the build directory exists locally
