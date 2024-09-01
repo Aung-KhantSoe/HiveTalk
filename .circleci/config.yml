@@ -48,16 +48,17 @@ jobs:
     docker:
       - image: circleci/python:3.9
     steps:
+      - run:
+          name: Install rsync and AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync awscli
       - add_ssh_keys:
           fingerprints:
             - "SHA256:UrS2gCQnKvY88GLdu3/sBG48StJW1gN/iG0+TLsQ0Lo"  # Replace with the correct fingerprint from CircleCI settings
       - run:
           name: Deploy to EC2
           command: |
-            # Install AWS CLI if it's not installed
-            sudo apt-get update
-            sudo apt-get install -y awscli
-
             # Define your variables
             EC2_USER=ec2-user
             EC2_HOST=13.250.103.232
