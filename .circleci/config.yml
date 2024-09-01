@@ -57,6 +57,17 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:m8/d+W2BnZUkDMIX1Dt9yikNFddGB0WAUKtff49ePXQ"  # Replace with the correct fingerprint from CircleCI settings
+  
+  deploy-to-ec2:
+    steps:
+      - run:
+          name: Install rsync and AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync awscli
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:m8/d+W2BnZUkDMIX1Dt9yikNFddGB0WAUKtff49ePXQ"  # Replace with the correct fingerprint from CircleCI settings
       - run:
           name: Deploy to EC2
           command: |
@@ -64,7 +75,7 @@ jobs:
             EC2_USER=ec2-user
             EC2_HOST=13.250.12.226
             BUILD_DIR=frontend/dist
-            DEPLOY_DIR=desktop/Hivetalk
+            DEPLOY_DIR=~/desktop/Hivetalk
 
             # Verify local build directory existence
             echo "Checking local build directory:"
