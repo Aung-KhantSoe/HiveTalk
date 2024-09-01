@@ -12,7 +12,7 @@ jobs:
   build:
     working_directory: ~/circleci-python
     docker:
-      - image: "circleci/python:3.9"  # Keep your existing Python version if necessary
+      - image: "circleci/python:3.9"
     steps:
       - checkout
       - run:
@@ -22,7 +22,7 @@ jobs:
   test:
     working_directory: ~/circleci-python
     docker:
-      - image: "circleci/python:3.9"  # Keep your existing Python version if necessary
+      - image: "circleci/python:3.9"
     steps:
       - checkout
       - run:
@@ -36,12 +36,12 @@ jobs:
       - run:
           name: Install Node.js Dependencies
           command: |
-            cd frontend  # Update this path if your frontend folder name is different
+            cd frontend
             npm install
       - run:
           name: Build React App
           command: |
-            cd frontend  # Update this path if your frontend folder name is different
+            cd frontend
             npm run build
       - run:
           name: Verify Build Directory
@@ -77,16 +77,13 @@ jobs:
             # Upload the build files to EC2
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
 
-
-            # Upload the build files to EC2
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
-
             # SSH into the EC2 instance and restart the application (if needed)
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<<EOF
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+              mkdir -p ~/desktop/Hivetalk  # Ensure the deployment directory exists
               cd $DEPLOY_DIR
               # Restart your server (e.g., if using PM2 or a similar tool)
               sudo systemctl restart nginx
-            EOF
+EOF
 
 workflows:
   version: 2
