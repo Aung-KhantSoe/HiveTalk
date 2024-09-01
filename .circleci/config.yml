@@ -63,17 +63,14 @@ jobs:
           fingerprints:
             - "SHA256:UrS2gCQnKvY88GLdu3/sBG48StJW1gN/iG0+TLsQ0Lo"  # Replace with the correct fingerprint from CircleCI settings
       - run:
-          name: Create Deployment Directory on EC2
-          command: |
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST 'mkdir -p ~/desktop/Hivetalk'
-      - run:
           name: Deploy to EC2
           command: |
             # Define your variables
             EC2_USER=ec2-user
             EC2_HOST=13.250.103.232
             BUILD_DIR=frontend/build
-            DEPLOY_DIR=desktop/Hivetalk
+            DEPLOY_DIR=~/desktop/Hivetalk
+
 
             # Upload the build files to EC2
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
