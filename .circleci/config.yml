@@ -43,6 +43,10 @@ jobs:
           command: |
             cd frontend  # Update this path if your frontend folder name is different
             npm run build
+      - run:
+          name: Verify Build Directory
+          command: |
+            ls -la frontend/build
 
   deploy-to-ec2:
     docker:
@@ -56,6 +60,10 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:UrS2gCQnKvY88GLdu3/sBG48StJW1gN/iG0+TLsQ0Lo"  # Replace with the correct fingerprint from CircleCI settings
+      - run:
+          name: Create Deployment Directory on EC2
+          command: |
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST 'mkdir -p ~/desktop/Hivetalk'
       - run:
           name: Deploy to EC2
           command: |
