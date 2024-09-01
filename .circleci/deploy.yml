@@ -1,0 +1,19 @@
+# deploy.yml
+- hosts: all
+  become: yes
+  tasks:
+    - name: Ensure the deployment directory exists
+      file:
+        path: /home/ec2-user/desktop/Hivetalk
+        state: directory
+
+    - name: Copy build files to EC2
+      copy:
+        src: /tmp/frontend/dist/
+        dest: /home/ec2-user/desktop/Hivetalk/
+        mode: '0644'
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
