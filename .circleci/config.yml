@@ -91,6 +91,3 @@ workflows:
           requires:
             - build
       - install-frontend
-      - deploy-to-ec2:
-          requires:
-            - install-frontend
