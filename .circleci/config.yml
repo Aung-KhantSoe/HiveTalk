@@ -51,20 +51,8 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@<13.250.103.232> << 'EOF'
-              # Ensure the deployment folder exists
-              mkdir -p /home/ec2-user/Desktop/HiveTalk
-              # Navigate to the deployment folder
-              cd /home/ec2-user/Desktop/HiveTalk
-              git pull origin circleci-project-setup      # Pull the latest code, adjust the branch as needed
-              source venv/bin/activate  # Activate the backend virtual environment
-              pip install -r backend/requirements.txt
-              cd frontend
-              npm install
-              npm run build             # Build the frontend if necessary
-              # Restart services as needed
-              sudo systemctl restart my-backend-service  # Replace with your actual service restart command
-            EOF
+            scp -o StrictHostKeyChecking=no deploy.sh ubuntu@<13.250.103.232>:~/deploy.sh
+            ssh -o StrictHostKeyChecking=no ubuntu@<13.250.103.232> 'bash ~/deploy.sh'
 
 workflows:
   version: 2
