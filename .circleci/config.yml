@@ -51,7 +51,10 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            scp -o StrictHostKeyChecking=no deploy.sh ubuntu@<13.250.103.232>:~/deploy.sh
+            # Copy the deployment script to the EC2 instance
+            scp -o StrictHostKeyChecking=no scripts/deploy.sh ubuntu@<13.250.103.232>:~/deploy.sh
+          
+            # SSH into the EC2 instance and run the script
             ssh -o StrictHostKeyChecking=no ubuntu@<13.250.103.232> 'bash ~/deploy.sh'
 
 workflows:
