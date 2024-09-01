@@ -49,11 +49,6 @@ jobs:
             cd frontend
             cd dist
             ls -la
-
-  deploy-to-ec2:
-    docker:
-      - image: circleci/python:3.9
-    steps:
       - run:
           name: Install rsync and AWS CLI
           command: |
@@ -85,6 +80,7 @@ jobs:
               # Restart your server (e.g., if using PM2 or a similar tool)
               sudo systemctl restart nginx
             EOF
+
 
 workflows:
   version: 2
