@@ -60,7 +60,7 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@<13.250.103.232> << 'EOF'
+            ssh -o StrictHostKeyChecking=no ubuntu@<13.250.103.232> \<< 'EOF'
               # Ensure the deployment folder exists
               mkdir -p /home/ec2-user/Desktop/HiveTalk
               # Navigate to the deployment folder
