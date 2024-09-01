@@ -6,7 +6,7 @@ executors:
       - image: circleci/python:3.9  # Update the Python version as needed
   node-executor:
     docker:
-      - image: circleci/node:16.14  # Update the Node.js version as needed
+      - image: circleci/node:18.20.3  # Update the Node.js version as needed
 
 jobs:
   build:
