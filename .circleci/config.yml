@@ -40,6 +40,11 @@ jobs:
           command: |
             cd frontend  # Update this path if your frontend folder name is different
             npm install
+      - run:
+          name: Build React App
+          command: |
+            cd frontend  # Update this path if your frontend folder name is different
+            npm run build
 
   deploy-to-ec2:
     docker:
@@ -51,11 +56,25 @@ jobs:
       - run:
           name: Deploy to EC2
           command: |
-            # Copy the deployment script to the EC2 instance
-            scp -o StrictHostKeyChecking=no scripts/deploy.sh ubuntu@<13.250.103.232>:~/deploy.sh
-          
-            # SSH into the EC2 instance and run the script
-            ssh -o StrictHostKeyChecking=no scripts/deploy.sh ubuntu@<13.250.103.232> 'bash ~/deploy.sh'
+            # Install AWS CLI if it's not installed
+            sudo apt-get update
+            sudo apt-get install -y awscli
+
+            # Define your variables
+            EC2_USER=ec2-user
+            EC2_HOST=13.250.103.232
+            BUILD_DIR=frontend/build
+            DEPLOY_DIR=desktop/Hivetalk
+
+            # Upload the build files to EC2
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
+
+            # SSH into the EC2 instance and restart the application (if needed)
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+              cd $DEPLOY_DIR
+              # Restart your server (e.g., if using PM2 or a similar tool)
+              sudo systemctl restart nginx
+            EOF
 
 workflows:
   version: 2
