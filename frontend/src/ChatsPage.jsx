@@ -28,7 +28,13 @@ const ChatsPage = (props) => {
                     projectId={projectId}
                     username={username}
                     secret={secret}
-                    style={{ height: '100%' }}
+                    style={{
+                        height: '50%',
+                        border: '2px solid #4A90E2', // Border color
+                        borderRadius: '10px',
+                        backgroundColor: '#f0f4f8', // Background color
+                        color: '#333', // Text color
+                    }}
                     renderChatList={(chatList) => <ChatList chatList={chatList}/>}
                 />
 

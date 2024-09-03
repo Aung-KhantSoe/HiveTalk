@@ -56,29 +56,29 @@ jobs:
             sudo apt-get install -y rsync awscli
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:m8/d+W2BnZUkDMIX1Dt9yikNFddGB0WAUKtff49ePXQ"  # Replace with the correct fingerprint from CircleCI settings
+            - "SHA256:HIkkjLLkcSAbpjz0URGScOHnktzBj8YQv97lBvdmlfU"  # Replace with the correct fingerprint from CircleCI settings
       - run:
           name: Deploy to EC2
           command: |
             # Define your variables
-            EC2_USER=ec2-user
-            EC2_HOST=13.250.12.226
-            BUILD_DIR=frontend/dist
-            DEPLOY_DIR=desktop/Hivetalk
+            EC2_USER=Administrator  # Adjust the username if different
+            EC2_HOST=52.221.246.142
+            LOCAL_FILE_1=frontend/src/App.css
+            LOCAL_FILE_2=frontend/src/AuthPage.jsx
+            REMOTE_DIR=C:/path/to/your/deployment/folder # Update with the correct path on Windows EC2
 
-            # Verify local build directory existence
-            echo "Checking local build directory:"
-            ls -la frontend || echo "Frontend directory not found"
-            ls -la frontend/dist || echo "Dist directory not found"
+            # Verify local files existence
+            echo "Checking local files:"
+            ls -la $LOCAL_FILE_1 || echo "App.css not found"
+            ls -la $LOCAL_FILE_2 || echo "AuthPage.jsx not found"
 
-            # Upload the build files to EC2
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
+            # Upload the specific files to EC2 using SCP
+            scp -o StrictHostKeyChecking=no $LOCAL_FILE_1 $LOCAL_FILE_2 $EC2_USER@$EC2_HOST:$REMOTE_DIR
 
-            # SSH into the EC2 instance and restart the application (if needed)
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<<EOF
-              cd $DEPLOY_DIR
-              # Restart your server (e.g., if using PM2 or a similar tool)
-              sudo systemctl restart nginx
+            # Restart your application if necessary (modify with the appropriate command for your Windows environment)
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST powershell.exe <<EOF
+              # Add commands to restart the server if needed
+              echo "Files copied successfully."
             EOF
 
 

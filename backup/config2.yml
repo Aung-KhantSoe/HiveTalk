@@ -64,7 +64,7 @@ jobs:
             EC2_USER=ec2-user
             EC2_HOST=13.250.12.226
             BUILD_DIR=frontend/dist
-            DEPLOY_DIR=desktop/Hivetalk
+            DEPLOY_DIR=/var/www/HiveTalk/
 
             # Verify local build directory existence
             echo "Checking local build directory:"
