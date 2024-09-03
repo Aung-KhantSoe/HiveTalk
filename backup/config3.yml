@@ -1,0 +1,50 @@
+executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Node.js Dependencies
+          command: |
+            cd frontend 
+            npm install
+      - run:
+          name: Build React App
+          command: |
+            cd frontend 
+            npm run build
+      - run:
+          name: Verify Build Directory
+          command: |
+            cd frontend
+            cd dist
+            ls -la
+      - run:
+          name: Install rsync and AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync awscli
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:m8/d+W2BnZUkDMIX1Dt9yikNFddGB0WAUKtff49ePXQ"  # Replace with the correct fingerprint from CircleCI settings
+      - run:
+          name: Deploy to EC2
+          command: |
+            # Define your variables
+            EC2_USER=ec2-user
+            EC2_HOST=13.250.12.226
+            BUILD_DIR=frontend/dist
+            DEPLOY_DIR=desktop/Hivetalk
+
+            # Verify local build directory existence
+            echo "Checking local build directory:"
+            ls -la frontend || echo "Frontend directory not found"
+            ls -la frontend/dist || echo "Dist directory not found"
+
+            # Upload the build files to EC2
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $BUILD_DIR/ $EC2_USER@$EC2_HOST:$DEPLOY_DIR
+
+            # SSH into the EC2 instance and restart the application (if needed)
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<<EOF
+              cd $DEPLOY_DIR
+              # Restart your server (e.g., if using PM2 or a similar tool)
+              sudo systemctl restart nginx
+            EOF

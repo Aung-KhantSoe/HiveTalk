@@ -76,7 +76,7 @@ jobs:
             scp -o StrictHostKeyChecking=no $LOCAL_FILE_1 $LOCAL_FILE_2 $EC2_USER@$EC2_HOST:$REMOTE_DIR
 
             # Restart your application if necessary (modify with the appropriate command for your Windows environment)
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST powershell.exe <<EOF
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST powershell.exe \<<EOF
               # Add commands to restart the server if needed
               echo "Files copied successfully."
             EOF
