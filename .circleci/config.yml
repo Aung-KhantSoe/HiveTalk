@@ -90,6 +90,7 @@ workflows:
       - test:
           requires:
             - build
-      - install-frontend
+      - install-frontend:
           requires:
             - test
+
