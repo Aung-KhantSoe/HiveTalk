@@ -29,7 +29,7 @@ jobs:
           name: Run Add Test Script
           command: python3 backend/add_test.py
 
-  install-frontend:
+  deploy:
     executor: node-executor
     steps:
       - checkout
@@ -72,13 +72,13 @@ jobs:
             ls -la $LOCAL_FILE_1 || echo "App.css not found"
             ls -la $LOCAL_FILE_2 || echo "AuthPage.jsx not found"
 
-            # Upload the specific files to EC2 using SCP
-            scp -o StrictHostKeyChecking=no $LOCAL_FILE_1 $LOCAL_FILE_2 $EC2_USER@$EC2_HOST:$REMOTE_DIR
+            # Use rsync to copy files
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_FILE_1 $LOCAL_FILE_2 $EC2_USER@$EC2_HOST:$REMOTE_DIR
 
-            # Restart your application if necessary (modify with the appropriate command for your Windows environment)
+            # Optional: Restart your application (adjust as needed for Windows)
             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST powershell.exe \<<EOF
-              # Add commands to restart the server if needed
-              echo "Files copied successfully."
+              echo "Files copied successfully via rsync."
+              # Add restart commands if needed
             EOF
 
 
@@ -90,7 +90,7 @@ workflows:
       - test:
           requires:
             - build
-      - install-frontend:
+      - deploy:
           requires:
             - test
 
