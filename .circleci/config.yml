@@ -65,7 +65,7 @@ jobs:
             EC2_HOST=52.221.246.142
             LOCAL_FILE_1=frontend/src/App.css
             LOCAL_FILE_2=frontend/src/AuthPage.jsx
-            REMOTE_DIR=C:/path/to/your/deployment/folder # Update with the correct path on Windows EC2
+            REMOTE_DIR=C:/Users/Administrator/Desktop/HiveTalk/frontend/src 
 
             # Verify local files existence
             echo "Checking local files:"
@@ -91,3 +91,5 @@ workflows:
           requires:
             - build
       - install-frontend
+          requires:
+            - test
