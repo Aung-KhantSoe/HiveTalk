@@ -15,8 +15,8 @@ jobs:
           command: |
             sudo apt-get update
             sudo apt-get install -y python3-pip
-            python3 -m venv venv
-            source venv/bin/activate
+            python3 -m venv backend/venv
+            source backend/venv/bin/activate
             pip install --upgrade pip
             pip install fastapi "uvicorn[standard]" requests
             pip freeze > backend/requirements.txt
@@ -24,7 +24,7 @@ jobs:
       - run:
           name: Run Backend Script
           command: |
-            source venv/bin/activate
+            source backend/venv/bin/activate
             python3 backend/add.py
 
   test-backend:
@@ -34,7 +34,7 @@ jobs:
       - run:
           name: Run Backend Tests
           command: |
-            source venv/bin/activate
+            source backend/venv/bin/activate
             python3 backend/add_test.py
 
   build-frontend:
@@ -80,7 +80,7 @@ jobs:
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_BACKEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_BACKEND_DIR
 
             # Install backend dependencies on EC2
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
               cd $REMOTE_BACKEND_DIR
               python3 -m venv venv
               source venv/bin/activate
@@ -100,7 +100,7 @@ jobs:
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_FRONTEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_FRONTEND_DIR
 
             # Optional: Restart services on EC2
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
               echo "Deployment completed."
               # Add commands to restart backend and frontend services if necessary
             EOF
