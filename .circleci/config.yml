@@ -72,7 +72,7 @@ jobs:
             # Define variables
             EC2_USER=ubuntu 
             EC2_HOST=3.25.58.202
-            LOCAL_BACKEND_DIR=/Users/aungkhantsoe/Desktop/pythonjs_chat/backend
+            LOCAL_BACKEND_DIR=backend
             REMOTE_BACKEND_DIR=/home/ubuntu/backend
 
             # Deploy backend code
