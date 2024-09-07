@@ -80,7 +80,7 @@ jobs:
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_BACKEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_BACKEND_DIR
 
             # Install backend dependencies on EC2
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
               cd $REMOTE_BACKEND_DIR
               python3 -m venv venv
               source venv/bin/activate
@@ -100,7 +100,7 @@ jobs:
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_FRONTEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_FRONTEND_DIR
 
             # Optional: Restart services on EC2
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
               echo "Deployment completed."
               # Add commands to restart backend and frontend services if necessary
             EOF
