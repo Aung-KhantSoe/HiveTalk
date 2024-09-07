@@ -86,7 +86,6 @@ jobs:
               pip install --upgrade pip
               pip install fastapi "uvicorn[standard]" requests
               pip freeze > requirements.txt
-              sudo uvicorn main:app --reload --port 3001
             EOF
 
       - run:
