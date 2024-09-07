@@ -1,96 +1,109 @@
 version: 2.1
 
 executors:
-  python-executor:
+  ubuntu-executor:
     docker:
-      - image: circleci/python:3.9  # Update the Python version as needed
-  node-executor:
-    docker:
-      - image: circleci/node:16  # Update the Node.js version as needed
+      - image: circleci/python:3.9  # Use an Ubuntu-based image with Python installed
 
 jobs:
-  build:
-    working_directory: ~/circleci-python
-    docker:
-      - image: "circleci/python:3.9"  # Keep your existing Python version if necessary
+  build-backend:
+    executor: ubuntu-executor
     steps:
       - checkout
       - run:
-          name: Run Add Script
+          name: Install Backend Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y python3-pip
+            pip3 install -r backend/requirements.txt
+
+      - run:
+          name: Run Backend Script
           command: python3 backend/add.py
 
-  test:
-    working_directory: ~/circleci-python
-    docker:
-      - image: "circleci/python:3.9"  # Keep your existing Python version if necessary
+  test-backend:
+    executor: ubuntu-executor
     steps:
       - checkout
       - run:
-          name: Run Add Test Script
+          name: Run Backend Tests
           command: python3 backend/add_test.py
 
-  deploy:
-    executor: node-executor
+  build-frontend:
+    docker:
+      - image: circleci/node:16  # Node.js version can be adjusted as needed
     steps:
       - checkout
       - run:
           name: Install Node.js Dependencies
           command: |
-            cd frontend 
+            cd frontend
             npm install
       - run:
           name: Build React App
           command: |
-            cd frontend 
-            npm run build
-      - run:
-          name: Verify Build Directory
-          command: |
             cd frontend
-            cd dist
-            ls -la
+            npm run build
+
+  deploy:
+    executor: ubuntu-executor
+    steps:
+      - checkout
       - run:
-          name: Install rsync and AWS CLI
+          name: Install Deployment Tools
           command: |
             sudo apt-get update
-            sudo apt-get install -y rsync awscli
+            sudo apt-get install -y rsync ssh awscli
+
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:HIkkjLLkcSAbpjz0URGScOHnktzBj8YQv97lBvdmlfU"  # Replace with the correct fingerprint from CircleCI settings
+            - "SHA256:r05suI0QYBEYtr9BPa2LM9ybLpnzWVm9uSfmad8FwlY"  # Replace with your SSH fingerprint
+
       - run:
-          name: Deploy to EC2
+          name: Deploy Backend to EC2
           command: |
-            # Define your variables
-            EC2_USER=Administrator  # Adjust the username if different
-            EC2_HOST=52.221.246.142
-            LOCAL_FILE_1=frontend/src/App.css
-            LOCAL_FILE_2=frontend/src/AuthPage.jsx
-            REMOTE_DIR=C:/Users/Administrator/Desktop/HiveTalk/frontend/src 
+            # Define variables
+            EC2_USER=ubuntu  # Adjust if needed
+            EC2_HOST=3.25.58.202
+            LOCAL_BACKEND_DIR=/Users/aungkhantsoe/Desktop/pythonjs_chat/backend
+            REMOTE_BACKEND_DIR=/home/ubuntu/backend
 
-            # Verify local files existence
-            echo "Checking local files:"
-            ls -la $LOCAL_FILE_1 || echo "App.css not found"
-            ls -la $LOCAL_FILE_2 || echo "AuthPage.jsx not found"
+            # Deploy backend code
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_BACKEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_BACKEND_DIR
 
-            # Use rsync to copy files
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_FILE_1 $LOCAL_FILE_2 $EC2_USER@$EC2_HOST:$REMOTE_DIR
-
-            # Optional: Restart your application (adjust as needed for Windows)
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST powershell.exe \<<EOF
-              echo "Files copied successfully via rsync."
-              # Add restart commands if needed
+            # Install backend dependencies on EC2
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+              cd $REMOTE_BACKEND_DIR
+              pip3 install -r requirements.txt
+              # Add command to start the backend service if necessary
             EOF
 
+      - run:
+          name: Deploy Frontend to EC2
+          command: |
+            # Define variables
+            LOCAL_FRONTEND_DIR=/Users/aungkhantsoe/Desktop/pythonjs_chat/frontend/dist
+            REMOTE_FRONTEND_DIR=/home/ubuntu/frontend
+
+            # Deploy frontend build
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_FRONTEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_FRONTEND_DIR
+
+            # Optional: Restart services on EC2
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+              echo "Deployment completed."
+              # Add commands to restart backend and frontend services if necessary
+            EOF
 
 workflows:
   version: 2
-  build_and_test:
+  build_and_deploy:
     jobs:
-      - build
-      - test:
+      - build-backend
+      - test-backend:
           requires:
-            - build
+            - build-backend
+      - build-frontend
       - deploy:
           requires:
-            - test
-
+            - test-backend
+            - build-frontend

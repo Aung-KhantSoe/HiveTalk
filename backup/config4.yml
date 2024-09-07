@@ -1,0 +1,96 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: circleci/python:3.9  # Update the Python version as needed
+  node-executor:
+    docker:
+      - image: circleci/node:16  # Update the Node.js version as needed
+
+jobs:
+  build:
+    working_directory: ~/circleci-python
+    docker:
+      - image: "circleci/python:3.9"  # Keep your existing Python version if necessary
+    steps:
+      - checkout
+      - run:
+          name: Run Add Script
+          command: python3 backend/add.py
+
+  test:
+    working_directory: ~/circleci-python
+    docker:
+      - image: "circleci/python:3.9"  # Keep your existing Python version if necessary
+    steps:
+      - checkout
+      - run:
+          name: Run Add Test Script
+          command: python3 backend/add_test.py
+
+  deploy:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Node.js Dependencies
+          command: |
+            cd frontend 
+            npm install
+      - run:
+          name: Build React App
+          command: |
+            cd frontend 
+            npm run build
+      - run:
+          name: Verify Build Directory
+          command: |
+            cd frontend
+            cd dist
+            ls -la
+      - run:
+          name: Install rsync and AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync awscli
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:r05suI0QYBEYtr9BPa2LM9ybLpnzWVm9uSfmad8FwlY"  # Replace with the correct fingerprint from CircleCI settings
+      - run:
+          name: Deploy to EC2
+          command: |
+            # Define your variables
+            EC2_USER=Administrator  # Adjust the username if different
+            EC2_HOST=52.221.246.142
+            LOCAL_FILE_1=frontend/src/App.css
+            LOCAL_FILE_2=frontend/src/AuthPage.jsx
+            REMOTE_DIR=C:/Users/Administrator/Desktop/HiveTalk/frontend/src 
+
+            # Verify local files existence
+            echo "Checking local files:"
+            ls -la $LOCAL_FILE_1 || echo "App.css not found"
+            ls -la $LOCAL_FILE_2 || echo "AuthPage.jsx not found"
+
+            # Use rsync to copy files
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_FILE_1 $LOCAL_FILE_2 $EC2_USER@$EC2_HOST:$REMOTE_DIR
+
+            # Optional: Restart your application (adjust as needed for Windows)
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST powershell.exe \<<EOF
+              echo "Files copied successfully via rsync."
+              # Add restart commands if needed
+            EOF
+
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+
