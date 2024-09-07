@@ -83,9 +83,10 @@ jobs:
               cd $REMOTE_BACKEND_DIR
               python3 -m venv venv
               source venv/bin/activate
-              pip install --upgrade pip
-              pip install fastapi "uvicorn[standard]" requests
+              sudo apt install --upgrade pip
+              sudo apt install fastapi "uvicorn[standard]" requests
               pip freeze > requirements.txt
+              sudo uvicorn main:app --reload --port 3001
             EOF
 
       - run:
@@ -103,7 +104,8 @@ jobs:
             # Optional: Restart services on EC2
             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
               cd $REMOTE_FRONTEND_DIR
-              npm run dev
+              npm install
+              sudo npm run dev
               echo "Deployment completed."
               # Add commands to restart backend and frontend services if necessary
             EOF
