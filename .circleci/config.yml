@@ -28,11 +28,13 @@ jobs:
             python3 backend/add.py
 
   test-backend:
+    executor: ubuntu-executor
     steps:
       - checkout
       - run:
           name: Run Backend Tests
           command: |
+            source venv/bin/activate
             python3 backend/add_test.py
 
   build-frontend:
