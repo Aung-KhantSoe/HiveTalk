@@ -75,11 +75,6 @@ jobs:
             LOCAL_BACKEND_DIR=/Users/aungkhantsoe/Desktop/pythonjs_chat/backend
             REMOTE_BACKEND_DIR=/home/ubuntu/backend
 
-            # Ensure the backend directory exists on EC2
-            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
-              mkdir -p $REMOTE_BACKEND_DIR
-            EOF 
-            
             # Deploy backend code
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_BACKEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_BACKEND_DIR
 
@@ -89,8 +84,8 @@ jobs:
               python3 -m venv venv
               source venv/bin/activate
               pip install --upgrade pip
-              pip install -r requirements.txt
-              # Add command to start the backend service if necessary
+              pip install fastapi "uvicorn[standard]" requests
+              pip freeze > requirements.txt
             EOF
 
       - run:
