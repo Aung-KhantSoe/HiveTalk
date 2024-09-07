@@ -70,11 +70,16 @@ jobs:
           name: Deploy Backend to EC2
           command: |
             # Define variables
-            EC2_USER=ubuntu  # Adjust if needed
+            EC2_USER=ubuntu 
             EC2_HOST=3.25.58.202
             LOCAL_BACKEND_DIR=/Users/aungkhantsoe/Desktop/pythonjs_chat/backend
             REMOTE_BACKEND_DIR=/home/ubuntu/backend
 
+            # Ensure the backend directory exists on EC2
+            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
+              mkdir -p $REMOTE_BACKEND_DIR
+            EOF 
+            
             # Deploy backend code
             rsync -avz -e "ssh -o StrictHostKeyChecking=no" $LOCAL_BACKEND_DIR/ $EC2_USER@$EC2_HOST:$REMOTE_BACKEND_DIR
 
