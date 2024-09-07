@@ -86,12 +86,15 @@ jobs:
               pip install --upgrade pip
               pip install fastapi "uvicorn[standard]" requests
               pip freeze > requirements.txt
+              sudo uvicorn main:app --reload --port 3001
             EOF
 
       - run:
           name: Deploy Frontend to EC2
           command: |
             # Define variables
+            EC2_USER=ubuntu 
+            EC2_HOST=3.25.58.202
             LOCAL_FRONTEND_DIR=frontend
             REMOTE_FRONTEND_DIR=/home/ubuntu/frontend
 
@@ -100,6 +103,8 @@ jobs:
 
             # Optional: Restart services on EC2
             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
+              cd $REMOTE_FRONTEND_DIR
+              npm run dev
               echo "Deployment completed."
               # Add commands to restart backend and frontend services if necessary
             EOF
