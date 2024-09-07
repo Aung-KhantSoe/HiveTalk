@@ -81,12 +81,14 @@ jobs:
             # Install backend dependencies on EC2
             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
               cd $REMOTE_BACKEND_DIR
-              python3 -m venv venv
+              # python3 -m venv venv
               source venv/bin/activate
               sudo apt install --upgrade pip
-              sudo apt install fastapi "uvicorn[standard]" requests
+              sudo apt install python3-fastapi
+              sudo apt install uvicorn
+              sudo apt install python3-requests
               pip freeze > requirements.txt
-              sudo uvicorn main:app --reload --port 3001
+              uvicorn main:app --reload --port 3001
             EOF
 
       - run:
