@@ -92,7 +92,7 @@ jobs:
           name: Deploy Frontend to EC2
           command: |
             # Define variables
-            LOCAL_FRONTEND_DIR=/Users/aungkhantsoe/Desktop/pythonjs_chat/frontend/dist
+            LOCAL_FRONTEND_DIR=frontend
             REMOTE_FRONTEND_DIR=/home/ubuntu/frontend
 
             # Deploy frontend build
