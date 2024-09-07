@@ -88,7 +88,8 @@ jobs:
               sudo apt install uvicorn
               sudo apt install python3-requests
               pip freeze > requirements.txt
-              uvicorn main:app --reload --port 3001
+              echo "Backend Deployment completed."
+              # uvicorn main:app --reload --port 3001
             EOF
 
       - run:
@@ -107,8 +108,8 @@ jobs:
             ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \<< EOF
               cd $REMOTE_FRONTEND_DIR
               npm install
-              sudo npm run dev
-              echo "Deployment completed."
+              # sudo npm run dev
+              echo "Frontend Deployment completed."
               # Add commands to restart backend and frontend services if necessary
             EOF
 
