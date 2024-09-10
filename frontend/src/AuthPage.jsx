@@ -15,7 +15,7 @@ const AuthPage = (props) => {
         <div className="background">
             <form onSubmit={onSubmit} className="form-card">
                 <div className="form-title">
-                    Hivetalk
+                    Hello HiveTalk
                 </div>
 
                 <div className="form-subtitle">

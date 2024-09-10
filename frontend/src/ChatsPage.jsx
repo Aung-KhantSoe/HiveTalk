@@ -35,6 +35,7 @@ const ChatsPage = (props) => {
                         backgroundColor: '#f0f4f8', // Background color
                         color: '#333', // Text color
                     }}
+                    timezoneOffset={6}
                     renderChatList={(chatList) => <ChatList chatList={chatList}/>}
                 />
 
