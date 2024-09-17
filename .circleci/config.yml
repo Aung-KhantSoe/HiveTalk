@@ -64,7 +64,7 @@ jobs:
 
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:r05suI0QYBEYtr9BPa2LM9ybLpnzWVm9uSfmad8FwlY"  # Replace with your SSH fingerprint
+            - "SHA256:r05suI0QYBEYtr9BPa2LM9ybLpnzWVm9uSfmad8FwlY" 
 
       - run:
           name: Deploy Backend to EC2
